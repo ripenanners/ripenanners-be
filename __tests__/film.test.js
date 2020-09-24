@@ -11,7 +11,7 @@ describe('film model tests', () => {
     return pool.query(fs.readFileSync('./sql/setup.sql', 'utf-8'));
   });
 
-  it.only('should insert to film with insert', async() => {
+  it('should insert to film with insert', async() => {
     const newStudio = await Studio.insert({ name: 'paramount', city: 'Los Angeles', state: 'California', country: 'USA' });
     const actor1 = await Actor.insert({
       name: 'Patrick',
@@ -39,39 +39,96 @@ describe('film model tests', () => {
       .send(newFilm)
       .then(res => {
         expect(res.body).toEqual({
-          filmId: newFilm.filmId,
+          filmId: expect.any(String),
           title: 'Sponge Bob meets Josh O.',
           release: '10/31/1989',
           studio: newStudio.studioId,
-          actors: [
+          actors: expect.arrayContaining([
             { role: 'Sponge Bob', actor: actor1.actorId }, 
             { role: 'Josh O.', actor: actor2.actorId }
-          ]
+          ]) 
         });
       });
   });
 
-  it('should find a studio by id', async() => {
-    const newFilm = await Film.insert({ title: 'paramount', release: 'Los Angeles', studio: 'California', cast: 'USA' });
+  it('should find a film by id', async() => {
+    const newStudio = await Studio.insert({ name: 'paramount', city: 'Los Angeles', state: 'California', country: 'USA' });
+    const actor1 = await Actor.insert({
+      name: 'Patrick',
+      dob: '8/10/84',
+      pob: 'Military Base',
+    });
+
+    const actor2 = await Actor.insert({
+      name: 'Josh 0.',
+      dob: '8/10/80',
+      pob: 'Disneyland',
+    });
+    const newFilm = await Film.insert({
+      title: 'Sponge Bob meets Josh O.',
+      release: '10/31/1989',
+      studio: newStudio.studioId,
+      actors: [
+        { role: 'Sponge Bob', actor: actor1.actorId }, 
+        { role: 'Josh O.', actor: actor2.actorId }
+      ]
+    });
 
     const response = await request(app)
-      .get(`/api/v1/studios/${newFilm.filmId}`);
+      .get(`/api/v1/films/${newFilm.filmId}`);
     
-    expect(response.body).toEqual(studio);
+    expect(response.body).toEqual(newFilm);
   });
 
-  it('should get all studios', async() => {
-    const studios = await Promise.all([
-      { name: 'paramount', city: 'Los Angeles', state: 'California', country: 'USA' }, 
-      { name: 'MGM', city: 'Los Angeles', state: 'California', country: 'USA' }, 
-      { name: 'Disney', city: 'Hollywood', state: 'California', country: 'USA' }
-    ].map(studio => Studio.insert(studio)));
+  it('should get all films', async() => {
+    const newStudio = await Studio.insert({ name: 'paramount', city: 'Los Angeles', state: 'California', country: 'USA' });
+    const actor1 = await Actor.insert({
+      name: 'Patrick',
+      dob: '8/10/84',
+      pob: 'Military Base',
+    });
+
+    const actor2 = await Actor.insert({
+      name: 'Josh 0.',
+      dob: '8/10/80',
+      pob: 'Disneyland',
+    });
+   
+    const films = await Promise.all([
+      {
+        title: 'Sponge Bob meets Josh O.',
+        release: '10/31/1989',
+        studio: newStudio.studioId,
+        actors: [
+          { role: 'Sponge Bob', actor: actor1.actorId }, 
+          { role: 'Josh O.', actor: actor2.actorId }
+        ]
+      },
+      {
+        title: 'Star Wars',
+        release: '10/31/1976',
+        studio: newStudio.studioId,
+        actors: [
+          { role: 'Sponge Bob', actor: actor1.actorId }, 
+          { role: 'Josh O.', actor: actor2.actorId }
+        ]
+      },
+      {
+        title: 'Josh Wars',
+        release: '10/31/2000',
+        studio: newStudio.studioId,
+        actors: [
+          { role: 'Sponge Bob', actor: actor1.actorId }, 
+          { role: 'Josh O.', actor: actor2.actorId }
+        ]
+      }
+    ].map(film => Film.insert(film)));
 
     return request(app)
-      .get('/api/v1/studios')
+      .get('/api/v1/films')
       .then(res => {
-        studios.forEach(studio => {
-          expect(res.body).toContainEqual(studio);
+        films.forEach(film => {
+          expect(res.body).toContainEqual(film);
         });
       });
   });

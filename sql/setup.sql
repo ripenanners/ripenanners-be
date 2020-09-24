@@ -30,6 +30,6 @@ CREATE TABLE films (
   title TEXT NOT NULL,
   release TEXT NOT NULL,
   studio BIGINT NOT NULL REFERENCES studios(studio_id),
-  actors JSONB
+  actors JSONB[]
 );
 
