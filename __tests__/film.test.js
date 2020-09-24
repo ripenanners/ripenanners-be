@@ -28,7 +28,7 @@ describe('film model tests', () => {
       title: 'Sponge Bob meets Josh O.',
       release: '10/31/1989',
       studio: newStudio.studioId,
-      cast: [
+      actors: [
         { role: 'Sponge Bob', actor: actor1.actorId }, 
         { role: 'Josh O.', actor: actor2.actorId }
       ]
@@ -43,7 +43,7 @@ describe('film model tests', () => {
           title: 'Sponge Bob meets Josh O.',
           release: '10/31/1989',
           studio: newStudio.studioId,
-          cast: [
+          actors: [
             { role: 'Sponge Bob', actor: actor1.actorId }, 
             { role: 'Josh O.', actor: actor2.actorId }
           ]

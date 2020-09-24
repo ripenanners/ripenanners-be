@@ -1,7 +1,7 @@
+DROP TABLE IF EXISTS films;
 DROP TABLE IF EXISTS studios;
 DROP TABLE IF EXISTS actors;
 DROP TABLE IF EXISTS reviewers;
-DROP TABLE IF EXISTS films;
 
 
 CREATE TABLE studios (
@@ -30,6 +30,6 @@ CREATE TABLE films (
   title TEXT NOT NULL,
   release TEXT NOT NULL,
   studio BIGINT NOT NULL REFERENCES studios(studio_id),
-  cast JSONB
+  actors JSONB
 );
 
