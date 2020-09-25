@@ -22,6 +22,7 @@
 // 3. Actors - We have to use JOIN
 // 4. Studios - We have to use JOIN
 // 5. DELETE specifics
+// 6. Deploy to Heroku
 
 
 
