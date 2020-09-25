@@ -5,11 +5,18 @@ const Studio = require('../lib/models/studio');
 const Actor = require('../lib/models/actor');
 const request = require('supertest');
 const app = require('../lib/app');
+const seed = require('../data/seed');
 
 describe('film model tests', () => {
   beforeEach(() => {
     return pool.query(fs.readFileSync('./sql/setup.sql', 'utf-8'));
   });
+
+  beforeEach(() => {
+    return seed();
+  });
+
+  
 
   it('should insert to film with insert', async() => {
     const newStudio = await Studio.insert({ name: 'paramount', city: 'Los Angeles', state: 'California', country: 'USA' });
@@ -126,7 +133,7 @@ describe('film model tests', () => {
 
     return request(app)
       .get('/api/v1/films')
-      .then(res => {
+      .then(res => {;
         films.forEach(film => {
           expect(res.body).toContainEqual(film);
         });
