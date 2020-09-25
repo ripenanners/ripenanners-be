@@ -83,4 +83,44 @@ describe('review routes', () => {
         });
       });
   });
+
+  it('delete review by it\'s id', async() => {
+    const reviewer = await Reviewer.insert({ name: 'sir', company: 'google' });
+
+    const studio = await Studio.insert({ name: 'paramount', city: 'Los Angeles', state: 'California', country: 'USA' });
+
+    const actors = await Promise.all([
+      { name: 'Patrick', dob: '8/10/84', pob: 'Military Base' },
+      { name: 'Josh 0.', dob: '8/10/80', pob: 'Disneyland' }
+    ].map(actor => Actor.insert(actor)));
+
+    const film = await Film.insert({
+      title: 'Sponge Bob meets Josh O.',
+      release: '10/31/1989',
+      studio: studio.studioId,
+      actors: [
+        { role: 'Sponge Bob', actor: actors[0].actorId }, 
+        { role: 'Josh O.', actor: actors[1].actorId }
+      ]
+    });
+
+    const review = await Review.insert({
+      rating: 3,
+      reviewer: reviewer.reviewerId,
+      review: 'okay movie',
+      film: film.filmId
+    });
+
+    return request(app)
+      .delete(`/api/v1/reviews/${review.reviewId}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          reviewId: expect.any(String),
+          rating: 3,
+          reviewer: reviewer.reviewerId,
+          review: 'okay movie',
+          film: film.filmId
+        });
+      });
+  })
 });
