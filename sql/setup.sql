@@ -1,22 +1,23 @@
-DROP TABLE IF EXISTS films;
-DROP TABLE IF EXISTS studios;
-DROP TABLE IF EXISTS actors;
-DROP TABLE IF EXISTS reviewers;
+DROP TABLE IF EXISTS films CASCADE;
+DROP TABLE IF EXISTS studios CASCADE;
+DROP TABLE IF EXISTS actors CASCADE;
+DROP TABLE IF EXISTS reviewers CASCADE;
+DROP TABLE IF EXISTS reviews CASCADE;
 
 
 CREATE TABLE studios (
   studio_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   name TEXT NOT NULL,
-  city TEXT NOT NULL,
-  state TEXT NOT NULL,
-  country TEXT NOT NULL
+  city TEXT,
+  state TEXT,
+  country TEXT
 );
 
 CREATE TABLE actors (
   actor_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   name TEXT NOT NULL,
-  dob TEXT NOT NULL,
-  pob TEXT NOT NULL
+  dob TEXT,
+  pob TEXT
 );
 
 CREATE TABLE reviewers (
@@ -33,3 +34,10 @@ CREATE TABLE films (
   actors JSONB[]
 );
 
+CREATE TABLE reviews (
+  review_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  rating INT CHECK (rating<6 AND rating>0),
+  reviewer BIGINT NOT NULL REFERENCES reviewers(reviewer_id),
+  review VARCHAR(140) NOT NULL,
+  film BIGINT NOT NULL REFERENCES films(film_id)
+);
